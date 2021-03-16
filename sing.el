@@ -32,9 +32,9 @@
 ;; Singel-use-which-key controls which key integration, set it to nil if you don't want which-key support enabled.
 
 ;;; Code:
-(defconst singel-keys-to-modifiers '((?s "H-") 
-				 (?d "s-") 
-				 (?f "M-")))
+(defconst singel-keys-to-modifiers '((?s 'hyper) 
+				 (?d 'super) 
+				 (?f 'meta)))
 (defconst singel-escape-key ?\;)
 (defconst singel-use-which-key t)
 
@@ -45,17 +45,21 @@
   (let ((current-modifers (list)) 
 	(escaped? nil) 
 	(intial? t) 
-	(curr-command-string "") 
-	(curr-input "") 
-	(modifier-keys '("C-"))		; initial state
+	(curr-command-string (vector)) 
+	(curr-input) 
+	(modifier-keys '(control))		; initial state
 	(append-to-end (lambda () 
-			 (setq curr-command-string (concat curr-command-string (apply 'concat
-										      modifier-keys) 
-							   (char-to-string curr-input) " ")) 
+			 (setq curr-command-string (vconcat curr-command-string
+							   (list (event-convert-list
+							    (append modifier-keys (list curr-input)))))) 
 			 (setq modifier-keys (list) intial? nil)))) 
     (catch 'exit-parsing 
-      (while (not (commandp (key-binding (kbd curr-command-string)))) 
-	(setq curr-input (read-key (concat curr-command-string " " (apply 'concat modifier-keys)
+      (while (not (commandp (key-binding curr-command-string))) 
+	(setq curr-input (read-key (concat
+				    (key-description curr-command-string)
+				    " "
+				    (single-key-description
+				     (event-convert-list (append modifier-keys (list ??))))
 					   ":"))) 
 	(cond ((equal curr-input ?) 
 	       (throw 'exit-parsing "stopped input")) 
@@ -69,13 +73,13 @@
 	      ((equal curr-input singel-escape-key) ; has to not be escaped as escaped was before
 		      (setq escaped? t)) 
 	       ((equal curr-input ? ) 
-		(if (not (member "C-" modifier-keys)) 
-		    (push "C-" modifier-keys) 
-		  (funcall append-to-end))) 
+		(if (not (member 'control modifier-keys)) 
+		    (push 'control modifier-keys) 
+		  (funcall append-to-end)))
 	       ((characterp curr-input) 
 		(funcall append-to-end)) 
 	       (t 
 		(setq unread-command-events (list curr-input)))) 
-	(if singel-use-which-key (which-key--create-buffer-and-show (kbd curr-command-string)))))
+	(if singel-use-which-key (which-key--create-buffer-and-show curr-command-string))))
     (if singel-use-which-key (which-key--hide-popup-ignore-command))
-    (call-interactively (key-binding (kbd curr-command-string)))))
+    (call-interactively (key-binding curr-command-string))))
