@@ -4,7 +4,7 @@
 
 ;; Author: Alex Walburg <ajwalburg@gmail.com>
 ;; Maintainer: Alex Walburg <ajwalburg@gmail.com>
-;; URL: 
+;; URL:
 ;; Version: 1.0.0
 ;; Keywords: ergonomics, evil
 ;; Package-Requires: ((emacs "24.4"))
@@ -33,13 +33,13 @@
 
 ;;; Code:
 (defconst singel-keys-to-modifiers '((?s 'hyper) 
-				 (?d 'super) 
-				 (?f 'meta)))
+				     (?d 'super) 
+				     (?f 'meta)))
 (defconst singel-escape-key ?\;)
 (defconst singel-use-which-key t)
 
 ;;;###autoload
-(defun singel-parse-streams () 
+(defun singel-parse-commands () 
   "Grabs input and uses it to give commands" 
   (interactive) 
   (let ((current-modifers (list)) 
@@ -47,39 +47,40 @@
 	(intial? t) 
 	(curr-command-string (vector)) 
 	(curr-input) 
-	(modifier-keys '(control))		; initial state
+	(modifier-keys '(control))	; initial state
 	(append-to-end (lambda () 
-			 (setq curr-command-string (vconcat curr-command-string
-							   (list (event-convert-list
-							    (append modifier-keys (list curr-input)))))) 
+			 (setq curr-command-string (vconcat curr-command-string (list
+										 (event-convert-list
+										  (append
+										   modifier-keys
+										   (list
+										    curr-input)))))) 
 			 (setq modifier-keys (list) intial? nil)))) 
     (catch 'exit-parsing 
       (while (not (commandp (key-binding curr-command-string))) 
-	(setq curr-input (read-key (concat
-				    (key-description curr-command-string)
-				    " "
-				    (single-key-description
-				     (event-convert-list (append modifier-keys (list ??))))
+	(setq curr-input (read-key (concat (key-description curr-command-string) " "
+					   (single-key-description (event-convert-list (append
+											modifier-keys
+											(list ??))))
 					   ":"))) 
 	(cond ((equal curr-input ?) 
 	       (throw 'exit-parsing "stopped input")) 
 	      (escaped? (let ((result (assoc curr-input singel-keys-to-modifiers))) 
 			  (when intial? 
 			    (setq modifier-keys (list) initial? nil)) 
-			  (if result
-			      (push (car (cdr result)) modifier-keys) 
+			  (if result (push (car (cdr result)) modifier-keys) 
 			    (funcall append-to-end)) 
 			  (setq escaped? nil))) 
 	      ((equal curr-input singel-escape-key) ; has to not be escaped as escaped was before
-		      (setq escaped? t)) 
-	       ((equal curr-input ? ) 
-		(if (not (member 'control modifier-keys)) 
-		    (push 'control modifier-keys) 
-		  (funcall append-to-end)))
-	       ((characterp curr-input) 
-		(funcall append-to-end)) 
-	       (t 
-		(setq unread-command-events (list curr-input)))) 
-	(if singel-use-which-key (which-key--create-buffer-and-show curr-command-string))))
-    (if singel-use-which-key (which-key--hide-popup-ignore-command))
+	       (setq escaped? t)) 
+	      ((equal curr-input ? ) 
+	       (if (not (member 'control modifier-keys)) 
+		   (push 'control modifier-keys) 
+		 (funcall append-to-end))) 
+	      ((characterp curr-input) 
+	       (funcall append-to-end)) 
+	      (t 
+	       (setq unread-command-events (list curr-input)))) 
+	(if singel-use-which-key (which-key--create-buffer-and-show curr-command-string)))) 
+    (if singel-use-which-key (which-key--hide-popup-ignore-command)) 
     (call-interactively (key-binding curr-command-string))))
