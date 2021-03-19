@@ -65,7 +65,7 @@
 					   ":"))) 
 	(cond ((equal curr-input ?) 
 	       (throw 'exit-parsing "stopped input")) 
-	      (escaped? (let ((result (assoc curr-input singel-keysto-modifiers))) 
+	      (escaped? (let ((result (assoc curr-input singel-keys-to-modifiers))) 
 			  (if result
 			      (progn
 				(when intial? 
