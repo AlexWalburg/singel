@@ -80,9 +80,7 @@
 		   (push 'control modifier-keys) 
 		 (funcall append-to-end))) 
 	      ((characterp curr-input) 
-	       (funcall append-to-end)) 
-	      (t 
-	       (setq unread-command-events (list curr-input)))) 
+	       (funcall append-to-end))) 
 	(if singel-use-which-key (which-key--create-buffer-and-show curr-command-string)))) 
     (if singel-use-which-key (which-key--hide-popup-ignore-command)) 
     (call-interactively (key-binding curr-command-string))))
