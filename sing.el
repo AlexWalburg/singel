@@ -58,7 +58,7 @@
 			 (setq modifier-keys (list) intial? nil)))) 
     (catch 'exit-parsing 
       (while (not (commandp (key-binding curr-command-string))) 
-	(setq curr-input (read-char (concat (key-description curr-command-string) " "
+	(setq curr-input (read-key (concat (key-description curr-command-string) " "
 					   (single-key-description (event-convert-list (append
 											modifier-keys
 											(list ??))))
