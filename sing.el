@@ -58,17 +58,19 @@
 			 (setq modifier-keys (list) intial? nil)))) 
     (catch 'exit-parsing 
       (while (not (commandp (key-binding curr-command-string))) 
-	(setq curr-input (read-key (concat (key-description curr-command-string) " "
+	(setq curr-input (read-char (concat (key-description curr-command-string) " "
 					   (single-key-description (event-convert-list (append
 											modifier-keys
 											(list ??))))
 					   ":"))) 
 	(cond ((equal curr-input ?) 
 	       (throw 'exit-parsing "stopped input")) 
-	      (escaped? (let ((result (assoc curr-input singel-keys-to-modifiers))) 
-			  (when intial? 
-			    (setq modifier-keys (list) initial? nil)) 
-			  (if result (push (car (cdr result)) modifier-keys) 
+	      (escaped? (let ((result (assoc curr-input singel-keysto-modifiers))) 
+			  (if result
+			      (progn
+				(when intial? 
+				  (setq modifier-keys (list) initial? nil))
+				(push (car (cdr result)) modifier-keys))
 			    (funcall append-to-end)) 
 			  (setq escaped? nil))) 
 	      ((equal curr-input singel-escape-key) ; has to not be escaped as escaped was before
