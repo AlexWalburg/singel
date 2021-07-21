@@ -32,11 +32,11 @@
 ;; Singel-use-which-key controls which key integration, set it to nil if you don't want which-key support enabled.
 
 ;;; Code:
-(defconst singel-keys-to-modifiers '((?s hyper) 
+(defvar singel-keys-to-modifiers '((?s hyper) 
 				     (?d super) 
 				     (?f meta)))
-(defconst singel-escape-key ?\;)
-(defconst singel-use-which-key t)
+(defvar singel-escape-key ?\;)
+(defvar singel-use-which-key t)
 
 ;;;###autoload
 (defun singel-parse-commands () 
