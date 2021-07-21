@@ -84,4 +84,6 @@
 	      (t (throw 'exit-parsing "invalid input"))) 
 	(if singel-use-which-key (which-key--create-buffer-and-show curr-command-string)))) 
     (if singel-use-which-key (which-key--hide-popup-ignore-command)) 
-    (call-interactively (key-binding curr-command-string))))
+    (if (commandp (key-binding curr-command-string))
+	(call-interactively (key-binding curr-command-string))
+      (message "Exited singel mode"))))
