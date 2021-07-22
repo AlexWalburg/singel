@@ -39,7 +39,7 @@
 				        (?p previous)))
 (defvar singel-escape-key ?\;)
 (defvar singel-use-which-key t)
-
+(provide sing)
 ;;;###autoload
 (defun singel-parse-commands () 
   "Grabs input and uses it to give commands" 
