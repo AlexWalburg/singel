@@ -35,6 +35,8 @@
 (defvar singel-keys-to-modifiers '((?s hyper) 
 				     (?d super) 
 				     (?f meta)))
+(defvar singel-keys-to-paging-commands '((?n next) 
+				        (?p previous)))
 (defvar singel-escape-key ?\;)
 (defvar singel-use-which-key t)
 
@@ -65,13 +67,20 @@
 					   ":"))) 
 	(cond ((equal curr-input ?) 
 	       (throw 'exit-parsing "stopped input")) 
-	      (escaped? (let ((result (assoc curr-input singel-keys-to-modifiers))) 
+	      (escaped? (let ((result (assoc curr-input singel-keys-to-modifiers))
+			      (paging-result (assoc curr-input singel-keys-to-paging-commands))) 
 			  (if result
 			      (progn
 				(when intial? 
 				  (setq modifier-keys (list) initial? nil))
-				(push (car (cdr result)) modifier-keys))
-			    (funcall append-to-end)) 
+				(push (car (cdr result)) modifier-keys)))
+			  (if (and paging-result singel-use-which-key)
+			      (cond ((eq paging-result 'next)
+				     (which-key-show-next-page-cycle))
+				    ((eq paging-result 'previous)
+				     (which-key-show-previous-page-cycle))))
+			  (if (not (or paging-result (and result singel-use-which-key)))
+			      (funcall append-to-end))
 			  (setq escaped? nil))) 
 	      ((equal curr-input singel-escape-key) ; has to not be escaped as escaped was before
 	       (setq escaped? t)) 
