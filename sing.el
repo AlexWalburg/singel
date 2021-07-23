@@ -32,13 +32,31 @@
 ;; Singel-use-which-key controls which key integration, set it to nil if you don't want which-key support enabled.
 
 ;;; Code:
-(defvar singel-keys-to-modifiers '((?s hyper) 
+(defgroup singel nil "Singel configuration")
+(defcustom singel-keys-to-modifiers '((?s hyper) 
 				     (?d super) 
-				     (?f meta)))
-(defvar singel-keys-to-paging-commands '((?n next) 
-				        (?p previous)))
-(defvar singel-escape-key ?\;)
-(defvar singel-use-which-key t)
+				     (?f meta))
+  "Alist which translates keys to modifiers"
+  :type '(alist :value-type symbol :key-type character)
+  :group 'singel)
+(defcustom singel-keys-to-paging-commands '((?n next) 
+				            (?p previous))
+  "Alist which translates keys to paging commands. Accepts next and previous currently"
+  :type '(alist
+	  :value-type (choice
+		       (const :tag "Next" next)
+		       (const :tag "Previous" previous))
+	  :key-type character)
+  :group 'singel)
+(defcustom singel-escape-key ?\;
+  "The escape key for singel, opens the second mode"
+  :type 'character
+  :group 'singel)
+(defcustom singel-use-which-key nil
+  "toggles which-key integration"
+  :type '(choice (const :tag "Enabled" t)
+		 (const :tag "Disabled" nil))
+  :group 'singel)
 (provide 'sing)
 ;;;###autoload
 (defun singel-parse-commands () 
