@@ -75,8 +75,9 @@
 										   modifier-keys
 										   (list
 										    curr-input)))))) 
-			 (setq modifier-keys (list) intial? nil)))) 
-    (catch 'exit-parsing 
+			 (setq modifier-keys (list) intial? nil)
+			 (if singel-use-which-key (which-key--create-buffer-and-show curr-command-string))))) 
+    (catch 'exit-parsing
       (while (not (commandp (key-binding curr-command-string))) 
 	(setq curr-input (read-key (concat (key-description curr-command-string) " "
 					   (single-key-description (event-convert-list (append
@@ -108,8 +109,7 @@
 		 (funcall append-to-end))) 
 	      ((characterp curr-input) 
 	       (funcall append-to-end))
-	      (t (throw 'exit-parsing "invalid input"))) 
-	(if singel-use-which-key (which-key--create-buffer-and-show curr-command-string)))) 
+	      (t (throw 'exit-parsing "invalid input"))) )) 
     (if singel-use-which-key (which-key--hide-popup-ignore-command)) 
     (if (commandp (key-binding curr-command-string))
 	(call-interactively (key-binding curr-command-string))
